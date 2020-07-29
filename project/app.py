@@ -43,7 +43,7 @@ def predictFilter():
         p = 1
         print(df.loc[df.loc[:, 'SKU'] == skuInput, 'yhat_upper'].values)
         for y in df.loc[df.loc[:, 'SKU'] == skuInput, 'yhat_upper'].values:
-            df_out = df_out.append({'Type': TYPE, 'Period': p, 'Quantity': round(y,0)}, ignore_index=True)
+            df_out = df_out.append({'Type': TYPE, 'Period': p, 'Quantity': round(y)}, ignore_index=True)
             p += 1
 
     return jsonify(df_out.to_dict('records'))
