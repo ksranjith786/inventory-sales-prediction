@@ -1,9 +1,43 @@
-from flask import Blueprint, render_template
-from fbprophet import Prophet
-predict_bp = Blueprint('predict', __name__, url_prefix='/predict')
+from flask_sqlalchemy import SQLAlchemy
+from app import db
 
-@predict_bp.route('/', methods=['GET', 'POST'])
-def predict():
-    print(dir(Prophet))
-    return "Prediction in Progress"
-# end predict
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+    TransactionID = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+    CustomerID = db.Column(
+        db.String(64),
+        index=False,
+        unique=True,
+        nullable=False
+    )
+    CustomerName = db.Column(
+        db.String(80),
+        index=True,
+        unique=True,
+        nullable=False
+    )
+    TransactionDateTime = db.Column(
+        db.DateTime,
+        index=False,
+        unique=False,
+        nullable=False
+    )
+    SKU = db.Column(
+        db.String(80),
+        index=False,
+        unique=False,
+        nullable=True
+    )
+    Quantity = db.Column(
+        db.Integer,
+        index=False,
+        unique=False,
+        nullable=False
+    )
+
+    def __repr__(self):
+        return '<Customer {}>'.format(self.CustomerID)
+

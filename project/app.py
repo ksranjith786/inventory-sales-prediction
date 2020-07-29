@@ -1,19 +1,13 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from os import environ
-from fbprophet import Prophet
-from routes.predict import predict_bp
+from flask_sqlalchemy import SQLAlchemy
+import pandas as pd 
 
-blueprints = (predict_bp)
+from routes.home import home_bp
 
-def create_app():
-    app = Flask(__name__)
-
-    get_config(app)
-
-    register_blueprint(app, blueprints)
-
-    return app
-# end create_app
+blueprints = (home_bp,)
+db = SQLAlchemy()
+app = Flask(__name__)
 
 def get_config(app):
     app.config.from_pyfile('config.py', silent=True)
@@ -35,7 +29,23 @@ def register_blueprint(app, blueprints):
     
 # end register_blueprint
 
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    from routes.predict import Transaction
+    PREDICT_DATASET='data/predict.csv'
+    df = pd.read_csv(PREDICT_DATASET)
+    #db.session()
+    #trans = Transaction.query.filter_by(TransactionID="CA-2016-152156").first_or_404()
+    return jsonify(df.to_dict('records'))
+# end predict
+
+get_config(app)
+
+register_blueprint(app, blueprints)
+
+db.init_app(app)
+with app.app_context():
+    from routes import predict  # Import routes
+
 if __name__ == '__main__':
-    app = create_app()
     app.run()
-# end main()
