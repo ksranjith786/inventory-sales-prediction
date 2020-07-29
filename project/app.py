@@ -29,7 +29,7 @@ def register_blueprint(app, blueprints):
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
-    PREDICT_DATASET='data/predict.csv'
+    PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/inventory.csv'
     df = pd.read_csv(PREDICT_DATASET)
     return jsonify(df.to_dict('records'))
 # end predict
