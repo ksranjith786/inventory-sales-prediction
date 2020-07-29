@@ -5,7 +5,11 @@ import pandas as pd
 from routes.home import home_bp
 
 blueprints = (home_bp,)
+
 app = Flask(__name__)
+
+PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/inventory.zip'
+df = pd.read_csv(PREDICT_DATASET)
 
 def get_config(app):
     app.config.from_pyfile('config.py', silent=True)
@@ -29,8 +33,7 @@ def register_blueprint(app, blueprints):
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
-    PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/inventory.csv'
-    df = pd.read_csv(PREDICT_DATASET)
+
     return jsonify(df.to_dict('records'))
 # end predict
 
