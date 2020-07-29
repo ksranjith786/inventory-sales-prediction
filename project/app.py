@@ -34,6 +34,7 @@ def register_blueprint(app, blueprints):
 @app.route('/predict', methods=['GET'])
 def predictFilter():
     skuInput = request.args.get('SKU', type=str)
+    noOfPredictionsInput = request.args.get('noOfPredictions', default=2, type=int)
     print(skuInput)
     TYPE = "WEEK"
     if skuInput is None:
@@ -42,7 +43,7 @@ def predictFilter():
         df_out = pd.DataFrame(columns=['Type', 'Period', 'Quantity'])
         p = 1
         print(df.loc[df.loc[:, 'SKU'] == skuInput, 'yhat_upper'].values)
-        for y in df.loc[df.loc[:, 'SKU'] == skuInput, 'yhat_upper'].values:
+        for y in df.loc[df.loc[:, 'SKU'] == skuInput, 'yhat_upper'].values[-1 * noOfPredictionsInput:]:
             df_out = df_out.append({'Type': TYPE, 'Period': p, 'Quantity': round(y)}, ignore_index=True)
             p += 1
         df_out['SKU'] = skuInput
