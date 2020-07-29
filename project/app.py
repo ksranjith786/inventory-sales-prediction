@@ -1,13 +1,16 @@
 from flask import Flask, Blueprint, jsonify
 from os import environ
+from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
+import urllib, sqlalchemy
 import pandas as pd 
 
 from routes.home import home_bp
 
 blueprints = (home_bp,)
-db = SQLAlchemy()
 app = Flask(__name__)
+connstr="DRIVER={ODBC Driver 17 for SQL Server};SERVER=hackathon2020-paymentors.database.windows.net;DATABASE=RetailInventory;UID=paymentors;PWD=ncrhyd2020@";
+db = SQLAlchemy()
 
 def get_config(app):
     app.config.from_pyfile('config.py', silent=True)
@@ -31,7 +34,19 @@ def register_blueprint(app, blueprints):
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
-    from routes.predict import Transaction
+    """
+    params = urllib.parse.quote(connstr)
+    engine = sqlalchemy.create_engine('mssql+pyodbc:///?odbc_connect={}'.format(params))
+    conn = engine.connect()
+    
+    result = conn.execute("SELECT TOP (10) * FROM [dbo].[transactions]")
+    for row in result:
+        print (str(row[2]) + " " + str(row[3]))
+    
+    conn.close()
+    """
+    
+    from models.transaction import Transaction
     PREDICT_DATASET='data/predict.csv'
     df = pd.read_csv(PREDICT_DATASET)
     #db.session()
@@ -43,9 +58,7 @@ get_config(app)
 
 register_blueprint(app, blueprints)
 
-db.init_app(app)
-with app.app_context():
-    from routes import predict  # Import routes
+#db.init_app(app)
 
 if __name__ == '__main__':
     app.run()
