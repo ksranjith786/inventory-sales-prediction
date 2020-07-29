@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request
 from os import environ
 import pandas as pd 
 
@@ -8,7 +8,7 @@ blueprints = (home_bp,)
 
 app = Flask(__name__)
 
-PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/inventory.zip'
+PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/predict.csv'
 df = pd.read_csv(PREDICT_DATASET)
 
 def get_config(app):
@@ -31,11 +31,16 @@ def register_blueprint(app, blueprints):
     
 # end register_blueprint
 
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
-
-    return jsonify(df.to_dict('records'))
-# end predict
+@app.route('/predict', methods=['GET'])
+def predictFilter():
+    skuInput = request.args.get('SKU', type=str)
+    print(df.columns)
+    print(skuInput)
+    if skuInput is None:
+        return jsonify(df.to_dict('records'))
+    
+    return jsonify(df.loc[df.loc[:, 'SKU'] == skuInput].to_dict('records'))
+# end predictFilter
 
 get_config(app)
 
