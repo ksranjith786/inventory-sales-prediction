@@ -8,7 +8,7 @@ blueprints = (home_bp,)
 
 app = Flask(__name__)
 
-PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/predict.csv'
+PREDICT_DATASET='https://github.com/ksranjith786/inventory-sales-prediction/raw/master/data/predictions.csv'
 df = pd.read_csv(PREDICT_DATASET)
 
 def get_config(app):
